@@ -80,10 +80,27 @@ h1.title{
 h1.title em{ font-style:normal; color:var(--violet); }
 .subtitle{
   font-size:16px; color:var(--ink-dim); max-width:46ch; line-height:1.6;
-  margin-bottom:56px;
+  margin-bottom:44px;
 }
-.mouse-wrap{ width:min(420px, 70vw); margin-bottom:44px; }
-.mouse-wrap svg{ width:100%; height:auto; display:block; }
+
+/* mouse hero image */
+.mouse-wrap{
+  width:min(700px,80vw);
+  margin-bottom:44px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.hero-mouse{
+  width:100%;
+  height:auto;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 20px 35px rgba(0,0,0,.25));
+  transition:transform .4s ease;
+}
+.hero-mouse:hover{ transform:scale(1.02); }
+
 .scroll-cue{
   font-family:var(--mono); font-size:11px; color:var(--ink-faint);
   letter-spacing:0.1em; display:flex; flex-direction:column; align-items:center; gap:10px;
@@ -91,11 +108,6 @@ h1.title em{ font-style:normal; color:var(--violet); }
 }
 .scroll-cue .line{ width:1px; height:34px; background:linear-gradient(var(--ink-faint), transparent); animation:pulse 2s infinite; }
 @keyframes pulse{ 0%,100%{opacity:.3} 50%{opacity:1} }
-
-/* mouse silhouette parts */
-.mouse-body{ fill:none; stroke:var(--ink); stroke-width:1.4; }
-.mouse-organ{ fill:var(--violet); opacity:0; transition:opacity .5s; }
-.mouse-wrap.reveal .mouse-organ{ opacity:0.85; }
 
 /* ---------- TISSUE GRID ---------- */
 #tissues{ padding:140px 24px 120px; max-width:1100px; margin:0 auto; }
@@ -205,26 +217,19 @@ footer{ text-align:center; padding:60px 24px 50px; font-family:var(--mono); font
   <div class="eyebrow">Wild type · C57BL/6 · spleen</div>
   <h1 class="title">A spatial map of the <em>immunopeptidome</em></h1>
   <p class="subtitle">Laser microdissected regions of the mouse spleen, profiled for MHC-bound peptides and proteins — region by region, not cell by cell.</p>
-
+  <!-- THIS IS YOUR PNG -->
   <div class="mouse-wrap" id="mouseWrap">
-    <svg viewBox="0 0 420 220" xmlns="http://www.w3.org/2000/svg">
-      <!-- minimal line-art mouse, side view -->
-      <path class="mouse-body" d="M40,150 C30,110 55,70 110,60 C130,56 145,44 160,40 C168,38 176,42 176,50 C176,58 168,62 160,64
-        C185,66 230,72 265,90 C300,108 330,110 355,100
-        C365,96 372,100 370,108 C368,116 350,124 335,124
-        C345,132 350,142 345,150
-        C340,158 328,156 322,148
-        C300,158 260,164 215,164 C150,164 90,158 55,140 C46,150 40,150 40,150 Z" />
-      <!-- ear -->
-      <circle class="mouse-body" cx="150" cy="46" r="16" />
-      <!-- eye -->
-      <circle cx="168" cy="56" r="2.4" fill="var(--ink)" />
-      <!-- tail -->
-      <path class="mouse-body" d="M40,148 C10,150 -10,130 -6,108 C-2,90 14,84 20,96" />
-      <!-- spleen organ marker (revealed) -->
-      <ellipse class="mouse-organ" cx="230" cy="96" rx="20" ry="9" transform="rotate(-18 230 96)"/>
-    </svg>
+      <img src="mouse.png"
+           alt="C57BL/6 Mouse"
+           class="hero-mouse">
   </div>
+
+  <button class="scroll-cue" onclick="document.getElementById('tissues').scrollIntoView()">
+      <span>BEGIN</span>
+      <span class="line"></span>
+  </button>
+
+</section>
 
   <button class="scroll-cue" onclick="document.getElementById('tissues').scrollIntoView()">
     <span>BEGIN</span>
@@ -487,12 +492,6 @@ document.querySelectorAll('.legend .item').forEach(el=>{
   el.addEventListener('click', ()=> selectRegion(el.dataset.region));
 });
 
-// ---- reveal mouse organ marker on scroll into view ----
-const mouseWrap = document.getElementById('mouseWrap');
-new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{ if(e.isIntersecting) setTimeout(()=>mouseWrap.classList.add('reveal'), 500); });
-},{threshold:0.5}).observe(mouseWrap);
-
 // ---- breadcrumb + progress dots on scroll ----
 const crumbMap = {hero:"C57BL/6 · MOUSE", tissues:"C57BL/6 › TISSUE SELECT", spleen:"C57BL/6 › SPLEEN › H&E"};
 const dots = document.querySelectorAll('.dot-progress i');
@@ -519,8 +518,6 @@ sections.forEach(s=>{
   },{threshold:0.4}).observe(s);
 });
 dots.forEach(d=> d.addEventListener('click', ()=> document.getElementById(d.dataset.target).scrollIntoView({behavior:'smooth'})));
-
-// default: open white pulp on first load of spleen section (optional convenience)
 </script>
 </body>
 </html>
