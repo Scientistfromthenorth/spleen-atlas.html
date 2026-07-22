@@ -1,0 +1,526 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spatial Immunopeptidomics Atlas — C57BL/6 Spleen</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --bg:#08080a;
+  --bg-panel:#111114;
+  --bg-card:#0e0e11;
+  --line:#232328;
+  --ink:#ECEAE6;
+  --ink-dim:#8B8A93;
+  --ink-faint:#57565f;
+  --violet:#8C7BC9;   /* hematoxylin */
+  --violet-dim:#4b4270;
+  --pink:#E39BB8;     /* eosin */
+  --teal:#5FA8A0;     /* marginal zone */
+  --maroon:#9C4A44;   /* red pulp */
+  --lavender:#C7BEE3; /* white pulp */
+  --display: 'Space Grotesk', sans-serif;
+  --body: 'Inter', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--body);
+  overflow-x:hidden;
+}
+::selection{ background:var(--violet-dim); color:var(--ink); }
+
+a{color:inherit;}
+
+/* ---------- Specimen breadcrumb (fixed) ---------- */
+.specimen-bar{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 32px;
+  font-family:var(--mono);
+  font-size:11px; letter-spacing:0.08em;
+  color:var(--ink-dim);
+  background:linear-gradient(to bottom, rgba(8,8,10,0.95), rgba(8,8,10,0));
+  pointer-events:none;
+}
+.specimen-bar span.tag{ color:var(--ink-faint); }
+.specimen-bar .path b{ color:var(--ink); font-weight:500; }
+.specimen-bar .path .sep{ color:var(--ink-faint); margin:0 6px; }
+.dot-progress{ display:flex; gap:6px; pointer-events:auto; }
+.dot-progress i{
+  width:6px; height:6px; border-radius:50%;
+  background:var(--ink-faint); display:block; transition:background .3s, transform .3s;
+}
+.dot-progress i.active{ background:var(--violet); transform:scale(1.4); }
+
+section{ position:relative; width:100%; }
+
+/* ---------- HERO ---------- */
+#hero{
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; text-align:center;
+  padding:120px 24px 80px;
+}
+.eyebrow{
+  font-family:var(--mono); font-size:12px; letter-spacing:0.18em;
+  color:var(--teal); text-transform:uppercase; margin-bottom:22px;
+}
+.eyebrow::before{ content:"◆ "; color:var(--pink); }
+h1.title{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(2.4rem, 5.5vw, 4.6rem);
+  line-height:1.05; letter-spacing:-0.02em;
+  max-width:14ch; margin-bottom:22px;
+}
+h1.title em{ font-style:normal; color:var(--violet); }
+.subtitle{
+  font-size:16px; color:var(--ink-dim); max-width:46ch; line-height:1.6;
+  margin-bottom:56px;
+}
+.mouse-wrap{ width:min(420px, 70vw); margin-bottom:44px; }
+.mouse-wrap svg{ width:100%; height:auto; display:block; }
+.scroll-cue{
+  font-family:var(--mono); font-size:11px; color:var(--ink-faint);
+  letter-spacing:0.1em; display:flex; flex-direction:column; align-items:center; gap:10px;
+  cursor:pointer; background:none; border:none;
+}
+.scroll-cue .line{ width:1px; height:34px; background:linear-gradient(var(--ink-faint), transparent); animation:pulse 2s infinite; }
+@keyframes pulse{ 0%,100%{opacity:.3} 50%{opacity:1} }
+
+/* mouse silhouette parts */
+.mouse-body{ fill:none; stroke:var(--ink); stroke-width:1.4; }
+.mouse-organ{ fill:var(--violet); opacity:0; transition:opacity .5s; }
+.mouse-wrap.reveal .mouse-organ{ opacity:0.85; }
+
+/* ---------- TISSUE GRID ---------- */
+#tissues{ padding:140px 24px 120px; max-width:1100px; margin:0 auto; }
+.section-head{ margin-bottom:56px; max-width:60ch; }
+.section-head .num{ font-family:var(--mono); font-size:12px; color:var(--pink); letter-spacing:.1em; margin-bottom:14px; display:block; }
+.section-head h2{ font-family:var(--display); font-size:clamp(1.6rem,3vw,2.4rem); font-weight:600; margin-bottom:14px; }
+.section-head p{ color:var(--ink-dim); line-height:1.65; font-size:15px; }
+
+.tissue-grid{
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); gap:16px;
+}
+.tissue-card{
+  border:1px solid var(--line); border-radius:2px; background:var(--bg-card);
+  padding:22px 20px; cursor:pointer; transition:border-color .25s, transform .25s, background .25s;
+  position:relative; overflow:hidden;
+}
+.tissue-card:hover{ border-color:var(--violet); transform:translateY(-3px); }
+.tissue-card.disabled{ cursor:default; opacity:.55; }
+.tissue-card.disabled:hover{ border-color:var(--line); transform:none; }
+.tissue-card .swatch{ width:100%; height:64px; border-radius:1px; margin-bottom:18px; position:relative; overflow:hidden; }
+.tissue-card .name{ font-family:var(--display); font-size:16px; font-weight:600; margin-bottom:6px; }
+.tissue-card .status{ font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; }
+.tissue-card.active .status{ color:var(--teal); }
+.tissue-card.disabled .status{ color:var(--ink-faint); }
+.tissue-card .status::before{ content:"● "; }
+
+/* ---------- SPLEEN / H&E ---------- */
+#spleen{ padding:140px 24px 80px; }
+.he-layout{
+  max-width:1180px; margin:0 auto; display:grid; grid-template-columns:1.15fr 0.85fr; gap:56px; align-items:start;
+}
+@media (max-width:900px){ .he-layout{ grid-template-columns:1fr; } }
+
+.he-frame{
+  position:relative; border:1px solid var(--line); background:#000; border-radius:2px; padding:14px;
+}
+.he-frame .scope-label{
+  position:absolute; top:-1px; left:-1px; background:var(--bg); border:1px solid var(--line); border-top:none; border-left:none;
+  font-family:var(--mono); font-size:10px; color:var(--ink-faint); padding:5px 10px; letter-spacing:.06em;
+}
+.he-frame svg{ width:100%; height:auto; display:block; border-radius:1px; }
+.he-region{ cursor:pointer; transition:filter .2s, opacity .2s; }
+.he-region:hover{ filter:brightness(1.3); }
+.he-region.selected{ filter:brightness(1.45) saturate(1.2); }
+.he-region.dimmed{ opacity:0.35; }
+
+.legend{ display:flex; gap:22px; margin-top:18px; flex-wrap:wrap; }
+.legend .item{ display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; color:var(--ink-dim); cursor:pointer; }
+.legend .chip{ width:10px; height:10px; border-radius:2px; display:inline-block; }
+.legend .item.selected{ color:var(--ink); }
+
+.side-copy p{ color:var(--ink-dim); line-height:1.7; font-size:14.5px; margin-bottom:16px; }
+.side-copy .hint{ font-family:var(--mono); font-size:11px; color:var(--ink-faint); border-left:2px solid var(--violet-dim); padding-left:12px; margin-top:24px; }
+
+/* ---------- DATA DRAWER ---------- */
+#data-drawer{
+  max-width:1180px; margin:56px auto 0; border-top:1px solid var(--line); padding-top:44px;
+  opacity:0; max-height:0; overflow:hidden; transition:opacity .4s ease, max-height .5s ease;
+}
+#data-drawer.open{ opacity:1; max-height:2400px; }
+.drawer-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:34px; flex-wrap:wrap; gap:14px;}
+.drawer-head h3{ font-family:var(--display); font-size:1.6rem; font-weight:600; }
+.drawer-head h3 .region-dot{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:10px; }
+.sample-tag{ font-family:var(--mono); font-size:10px; letter-spacing:.08em; color:var(--bg); background:var(--pink); padding:4px 8px; border-radius:2px; text-transform:uppercase; }
+
+.stat-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); margin-bottom:40px; }
+@media (max-width:700px){ .stat-row{ grid-template-columns:repeat(2,1fr);} }
+.stat{ background:var(--bg-panel); padding:22px 20px; }
+.stat .val{ font-family:var(--display); font-size:1.9rem; font-weight:600; }
+.stat .lab{ font-family:var(--mono); font-size:10.5px; color:var(--ink-dim); letter-spacing:.06em; text-transform:uppercase; margin-top:6px; }
+
+.charts-row{ display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-bottom:40px; }
+@media (max-width:800px){ .charts-row{ grid-template-columns:1fr; } }
+.chart-card{ border:1px solid var(--line); padding:22px 22px 18px; background:var(--bg-panel); }
+.chart-card h4{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-dim); margin-bottom:18px; }
+.bar-chart{ display:flex; align-items:flex-end; gap:6px; height:140px; }
+.bar-chart .bar{ flex:1; background:var(--violet); border-radius:1px 1px 0 0; position:relative; min-height:2px; transition:background .2s; }
+.bar-chart .bar span{ position:absolute; bottom:-20px; left:0; right:0; text-align:center; font-family:var(--mono); font-size:9px; color:var(--ink-faint); }
+
+.motif-card{ border:1px solid var(--line); padding:22px; background:var(--bg-panel); margin-bottom:40px; }
+.motif-card h4{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-dim); margin-bottom:20px; }
+.motif-row{ display:flex; gap:4px; justify-content:center; }
+.motif-pos{ display:flex; flex-direction:column-reverse; align-items:center; width:34px; }
+.motif-pos .aa{ font-family:var(--display); font-weight:700; line-height:0.82; }
+.motif-pos .idx{ font-family:var(--mono); font-size:9px; color:var(--ink-faint); margin-top:10px; }
+
+.empty-note{ font-family:var(--mono); font-size:12px; color:var(--ink-faint); text-align:center; padding:40px 0; border:1px dashed var(--line); }
+
+footer{ text-align:center; padding:60px 24px 50px; font-family:var(--mono); font-size:11px; color:var(--ink-faint); letter-spacing:.05em; }
+</style>
+</head>
+<body>
+
+<div class="specimen-bar">
+  <div class="path">
+    <span class="tag">SPECIMEN&nbsp;</span><b id="crumb">C57BL/6 · MOUSE</b>
+  </div>
+  <div class="dot-progress">
+    <i data-target="hero" class="active"></i>
+    <i data-target="tissues"></i>
+    <i data-target="spleen"></i>
+  </div>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="eyebrow">Wild type · C57BL/6 · spleen</div>
+  <h1 class="title">A spatial map of the <em>immunopeptidome</em></h1>
+  <p class="subtitle">Laser microdissected regions of the mouse spleen, profiled for MHC-bound peptides and proteins — region by region, not cell by cell.</p>
+
+  <div class="mouse-wrap" id="mouseWrap">
+    <svg viewBox="0 0 420 220" xmlns="http://www.w3.org/2000/svg">
+      <!-- minimal line-art mouse, side view -->
+      <path class="mouse-body" d="M40,150 C30,110 55,70 110,60 C130,56 145,44 160,40 C168,38 176,42 176,50 C176,58 168,62 160,64
+        C185,66 230,72 265,90 C300,108 330,110 355,100
+        C365,96 372,100 370,108 C368,116 350,124 335,124
+        C345,132 350,142 345,150
+        C340,158 328,156 322,148
+        C300,158 260,164 215,164 C150,164 90,158 55,140 C46,150 40,150 40,150 Z" />
+      <!-- ear -->
+      <circle class="mouse-body" cx="150" cy="46" r="16" />
+      <!-- eye -->
+      <circle cx="168" cy="56" r="2.4" fill="var(--ink)" />
+      <!-- tail -->
+      <path class="mouse-body" d="M40,148 C10,150 -10,130 -6,108 C-2,90 14,84 20,96" />
+      <!-- spleen organ marker (revealed) -->
+      <ellipse class="mouse-organ" cx="230" cy="96" rx="20" ry="9" transform="rotate(-18 230 96)"/>
+    </svg>
+  </div>
+
+  <button class="scroll-cue" onclick="document.getElementById('tissues').scrollIntoView()">
+    <span>BEGIN</span>
+    <span class="line"></span>
+  </button>
+</section>
+
+<!-- TISSUE GRID -->
+<section id="tissues">
+  <div class="section-head">
+    <span class="num">SPECIMEN BANK</span>
+    <h2>Select a tissue</h2>
+    <p>One organ is fully profiled below. The remaining slots are reserved — spatial omics data for these tissues has not yet been acquired.</p>
+  </div>
+  <div class="tissue-grid" id="tissueGrid"></div>
+</section>
+
+<!-- SPLEEN / H&E -->
+<section id="spleen">
+  <div class="section-head" style="max-width:1180px; margin:0 auto 56px;">
+    <span class="num">SLIDE 01 — H&amp;E</span>
+    <h2>Spleen cross-section</h2>
+    <p>Three histologically distinct regions were laser microdissected from this section. Click a region — or its legend swatch — to view its immunopeptidomics profile.</p>
+  </div>
+
+  <div class="he-layout">
+    <div>
+      <div class="he-frame">
+        <span class="scope-label">10× · H&amp;E · FIELD 03</span>
+        <svg viewBox="0 0 520 420" xmlns="http://www.w3.org/2000/svg" id="heSvg">
+          <defs>
+            <radialGradient id="rpGrad" cx="50%" cy="50%" r="75%">
+              <stop offset="0%" stop-color="#8a3f3a"/>
+              <stop offset="100%" stop-color="#6e2f2c"/>
+            </radialGradient>
+            <filter id="grain">
+              <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="noise"/>
+              <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.05 0"/>
+            </filter>
+          </defs>
+
+          <!-- tissue outline -->
+          <ellipse cx="260" cy="210" rx="230" ry="180" fill="url(#rpGrad)" stroke="#3a1c1a" stroke-width="2"/>
+
+          <!-- red pulp region (background of tissue, clickable) -->
+          <ellipse class="he-region" data-region="red" cx="260" cy="210" rx="228" ry="178" fill="transparent"/>
+
+          <!-- follicles: each = white pulp core + marginal zone ring -->
+          <g class="follicle">
+            <circle class="he-region" data-region="marginal" cx="185" cy="150" r="54" fill="#4d8e88"/>
+            <circle class="he-region" data-region="white" cx="185" cy="150" r="34" fill="#b9aede"/>
+            <circle cx="185" cy="150" r="7" fill="#7d6bb0"/>
+          </g>
+          <g class="follicle">
+            <circle class="he-region" data-region="marginal" cx="330" cy="130" r="42" fill="#4d8e88"/>
+            <circle class="he-region" data-region="white" cx="330" cy="130" r="26" fill="#b9aede"/>
+            <circle cx="330" cy="130" r="5.5" fill="#7d6bb0"/>
+          </g>
+          <g class="follicle">
+            <circle class="he-region" data-region="marginal" cx="300" cy="260" r="50" fill="#4d8e88"/>
+            <circle class="he-region" data-region="white" cx="300" cy="260" r="31" fill="#b9aede"/>
+            <circle cx="300" cy="260" r="6.5" fill="#7d6bb0"/>
+          </g>
+          <g class="follicle">
+            <circle class="he-region" data-region="marginal" cx="150" cy="280" r="34" fill="#4d8e88"/>
+            <circle class="he-region" data-region="white" cx="150" cy="280" r="20" fill="#b9aede"/>
+            <circle cx="150" cy="280" r="4.5" fill="#7d6bb0"/>
+          </g>
+
+          <ellipse cx="260" cy="210" rx="228" ry="178" fill="url(#grain)" opacity="0.4" style="pointer-events:none"/>
+        </svg>
+      </div>
+      <div class="legend" id="legend">
+        <div class="item" data-region="white"><span class="chip" style="background:#C7BEE3"></span>White pulp</div>
+        <div class="item" data-region="marginal"><span class="chip" style="background:#5FA8A0"></span>Marginal zone</div>
+        <div class="item" data-region="red"><span class="chip" style="background:#9C4A44"></span>Red pulp</div>
+      </div>
+    </div>
+
+    <div class="side-copy">
+      <p>White pulp follicles — lymphoid nodules rich in T and B cells — sit within the red pulp, separated by the marginal zone, the interface where blood-borne antigen is filtered.</p>
+      <p>Each region was independently microdissected and processed for MHC class I immunopeptidome and whole-proteome analysis, so peptide and protein content can be compared region to region rather than averaged across the whole organ.</p>
+      <div class="hint">CLICK A REGION TO LOAD ITS PROFILE ↓</div>
+    </div>
+  </div>
+
+  <div id="data-drawer">
+    <div class="drawer-head">
+      <h3><span class="region-dot" id="drawerDot"></span><span id="drawerTitle">Region</span></h3>
+      <span class="sample-tag">Sample data — replace with your dataset</span>
+    </div>
+
+    <div class="stat-row" id="statRow"></div>
+
+    <div class="charts-row">
+      <div class="chart-card">
+        <h4>Peptide length distribution</h4>
+        <div class="bar-chart" id="lengthChart"></div>
+      </div>
+      <div class="chart-card">
+        <h4>Binding affinity (IC50, nM)</h4>
+        <div class="bar-chart" id="affinityChart"></div>
+      </div>
+    </div>
+
+    <div class="motif-card">
+      <h4>Sequence motif — anchor positions</h4>
+      <div class="motif-row" id="motifRow"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  SPATIAL IMMUNOPEPTIDOMICS ATLAS · WILD TYPE C57BL/6 MOUSE · PROTOTYPE
+</footer>
+
+<script>
+// ============================================================
+// DATA — replace these values with your own dataset.
+// Each region needs: peptideCount, proteinCount, avgLength,
+// lengthDist (map length→count), affinityDist (bins→count),
+// and a motif (array of {pos, letters:[{aa, freq}]}).
+// ============================================================
+const DATA = {
+  white: {
+    label:"White pulp", color:"#C7BEE3",
+    length:{8:14,9:212,10:78,11:26,12:12},
+    affinity:{ "<50":140, "50-150":96, "150-500":64, "500-1500":30, ">1500":12 },
+    motif:[
+      {pos:1, letters:[["Y",22],["S",18],["A",14]]},
+      {pos:2, letters:[["L",48],["M",22],["I",12]]},
+      {pos:3, letters:[["A",20],["S",16],["T",14]]},
+      {pos:4, letters:[["G",16],["D",14],["N",12]]},
+      {pos:5, letters:[["S",18],["A",14],["P",10]]},
+      {pos:6, letters:[["A",16],["G",14],["V",12]]},
+      {pos:7, letters:[["L",18],["V",14],["A",12]]},
+      {pos:8, letters:[["A",20],["S",16],["G",12]]},
+      {pos:9, letters:[["V",40],["L",26],["I",18]]}
+    ]
+  },
+  marginal: {
+    label:"Marginal zone", color:"#5FA8A0",
+    stats:{ peptides:289 },
+    length:{8:10,9:176,10:66,11:24,12:9},
+    affinity:{ "<50":118, "50-150":84, "150-500":52, "500-1500":26, ">1500":9 },
+    motif:[
+      {pos:1, letters:[["S",20],["Y",16],["A",12]]},
+      {pos:2, letters:[["L",44],["I",24],["M",14]]},
+      {pos:3, letters:[["S",18],["A",16],["T",12]]},
+      {pos:4, letters:[["D",16],["G",12],["N",10]]},
+      {pos:5, letters:[["A",16],["S",14],["P",10]]},
+      {pos:6, letters:[["G",16],["A",12],["V",10]]},
+      {pos:7, letters:[["V",16],["L",14],["A",10]]},
+      {pos:8, letters:[["S",18],["A",14],["G",10]]},
+      {pos:9, letters:[["V",36],["L",24],["I",16]]}
+    ]
+  },
+  red: {
+    label:"Red pulp", color:"#9C4A44",
+    stats:{ peptides:198 },
+    length:{8:8,9:118,10:48,11:18,12:6},
+    affinity:{ "<50":78, "50-150":58, "150-500":38, "500-1500":18, ">1500":6 },
+    motif:[
+      {pos:1, letters:[["A",18],["S",16],["Y",12]]},
+      {pos:2, letters:[["L",40],["M",22],["I",16]]},
+      {pos:3, letters:[["A",16],["S",14],["G",10]]},
+      {pos:4, letters:[["G",14],["D",12],["N",10]]},
+      {pos:5, letters:[["S",14],["A",12],["P",8]]},
+      {pos:6, letters:[["A",14],["G",12],["V",10]]},
+      {pos:7, letters:[["L",14],["V",12],["A",10]]},
+      {pos:8, letters:[["A",16],["S",12],["G",10]]},
+      {pos:9, letters:[["V",32],["L",20],["I",14]]}
+    ]
+  }
+};
+
+const TISSUES = [
+  {key:"spleen", name:"Spleen", active:true, color:"linear-gradient(135deg,#9C4A44,#5FA8A0)"},
+  {key:"liver", name:"Liver", active:false},
+  {key:"kidney", name:"Kidney", active:false},
+  {key:"lymph", name:"Lymph node", active:false},
+  {key:"thymus", name:"Thymus", active:false},
+  {key:"lung", name:"Lung", active:false},
+];
+
+// ---- build tissue grid ----
+const grid = document.getElementById('tissueGrid');
+TISSUES.forEach(t=>{
+  const card = document.createElement('div');
+  card.className = 'tissue-card ' + (t.active ? 'active' : 'disabled');
+  card.innerHTML = `
+    <div class="swatch" style="background:${t.active ? t.color : '#141417'}; ${!t.active ? 'border:1px dashed #232328;' : ''}"></div>
+    <div class="name">${t.name}</div>
+    <div class="status">${t.active ? 'Data available' : 'Awaiting specimen'}</div>
+  `;
+  if(t.active){
+    card.onclick = ()=> document.getElementById('spleen').scrollIntoView({behavior:'smooth'});
+  }
+  grid.appendChild(card);
+});
+
+// ---- region selection ----
+let currentRegion = null;
+const drawer = document.getElementById('data-drawer');
+
+function selectRegion(key){
+  currentRegion = key;
+  const d = DATA[key];
+
+  document.querySelectorAll('.he-region').forEach(el=>{
+    el.classList.toggle('selected', el.dataset.region === key);
+    el.classList.toggle('dimmed', el.dataset.region !== key);
+  });
+  document.querySelectorAll('.legend .item').forEach(el=>{
+    el.classList.toggle('selected', el.dataset.region === key);
+  });
+
+  document.getElementById('drawerDot').style.background = d.color;
+  document.getElementById('drawerTitle').textContent = d.label;
+
+  // stats
+  const avgLen = (Object.entries(d.length).reduce((s,[l,c])=>s+l*c,0) / Object.values(d.length).reduce((a,b)=>a+b,0)).toFixed(1);
+  const totalPep = Object.values(d.length).reduce((a,b)=>a+b,0);
+  document.getElementById('statRow').innerHTML = `
+    <div class="stat"><div class="val">${totalPep}</div><div class="lab">Unique peptides</div></div>
+    <div class="stat"><div class="val">${avgLen}</div><div class="lab">Mean length (aa)</div></div>
+    <div class="stat"><div class="val">${Math.round(totalPep*0.62)}</div><div class="lab">Source proteins</div></div>
+    <div class="stat"><div class="val">9-mer</div><div class="lab">Dominant length</div></div>
+  `;
+
+  // length chart
+  const lenMax = Math.max(...Object.values(d.length));
+  document.getElementById('lengthChart').innerHTML = Object.entries(d.length).map(([len,c])=>
+    `<div class="bar" style="height:${(c/lenMax*100)}%; background:${d.color}"><span>${len}</span></div>`
+  ).join('');
+
+  // affinity chart
+  const affMax = Math.max(...Object.values(d.affinity));
+  document.getElementById('affinityChart').innerHTML = Object.entries(d.affinity).map(([bin,c])=>
+    `<div class="bar" style="height:${(c/affMax*100)}%; background:${d.color}"><span>${bin}</span></div>`
+  ).join('');
+
+  // motif
+  document.getElementById('motifRow').innerHTML = d.motif.map(m=>{
+    const maxF = Math.max(...m.letters.map(l=>l[1]));
+    const stack = m.letters.map(([aa,freq])=>
+      `<div class="aa" style="font-size:${8+ (freq/maxF)*22}px; color:${d.color}">${aa}</div>`
+    ).join('');
+    return `<div class="motif-pos">${stack}<div class="idx">P${m.pos}</div></div>`;
+  }).join('');
+
+  drawer.classList.add('open');
+  setTimeout(()=> drawer.scrollIntoView({behavior:'smooth', block:'nearest'}), 120);
+}
+
+document.querySelectorAll('.he-region').forEach(el=>{
+  el.addEventListener('click', ()=> selectRegion(el.dataset.region));
+});
+document.querySelectorAll('.legend .item').forEach(el=>{
+  el.addEventListener('click', ()=> selectRegion(el.dataset.region));
+});
+
+// ---- reveal mouse organ marker on scroll into view ----
+const mouseWrap = document.getElementById('mouseWrap');
+new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) setTimeout(()=>mouseWrap.classList.add('reveal'), 500); });
+},{threshold:0.5}).observe(mouseWrap);
+
+// ---- breadcrumb + progress dots on scroll ----
+const crumbMap = {hero:"C57BL/6 · MOUSE", tissues:"C57BL/6 › TISSUE SELECT", spleen:"C57BL/6 › SPLEEN › H&E"};
+const dots = document.querySelectorAll('.dot-progress i');
+const sections = ['hero','tissues','spleen'].map(id=>document.getElementById(id));
+const crumbEl = document.getElementById('crumb');
+
+new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const id = e.target.id;
+      crumbEl.textContent = crumbMap[id];
+      dots.forEach(d=> d.classList.toggle('active', d.dataset.target === id));
+    }
+  });
+},{threshold:0.4}).observe(document.getElementById('hero'));
+sections.forEach(s=>{
+  new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        crumbEl.textContent = crumbMap[s.id];
+        dots.forEach(d=> d.classList.toggle('active', d.dataset.target === s.id));
+      }
+    });
+  },{threshold:0.4}).observe(s);
+});
+dots.forEach(d=> d.addEventListener('click', ()=> document.getElementById(d.dataset.target).scrollIntoView({behavior:'smooth'})));
+
+// default: open white pulp on first load of spleen section (optional convenience)
+</script>
+</body>
+</html>
