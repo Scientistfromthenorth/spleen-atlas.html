@@ -80,11 +80,27 @@ h1.title{
 h1.title em{ font-style:normal; color:var(--violet); }
 .subtitle{
   font-size:16px; color:var(--ink-dim); max-width:46ch; line-height:1.6;
-  margin-bottom:56px;
+  margin-bottom:44px;
 }
-<div class="mouse">
-    <img src="mouse.png" alt="C57BL/6 laboratory mouse">
-</div>
+
+/* mouse hero image */
+.mouse-wrap{
+  width:min(700px,80vw);
+  margin-bottom:44px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.hero-mouse{
+  width:100%;
+  height:auto;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 20px 35px rgba(0,0,0,.25));
+  transition:transform .4s ease;
+}
+.hero-mouse:hover{ transform:scale(1.02); }
+
 .scroll-cue{
   font-family:var(--mono); font-size:11px; color:var(--ink-faint);
   letter-spacing:0.1em; display:flex; flex-direction:column; align-items:center; gap:10px;
@@ -202,57 +218,8 @@ footer{ text-align:center; padding:60px 24px 50px; font-family:var(--mono); font
   <h1 class="title">A spatial map of the <em>immunopeptidome</em></h1>
   <p class="subtitle">Laser microdissected regions of the mouse spleen, profiled for MHC-bound peptides and proteins — region by region, not cell by cell.</p>
 
-  .mouse{
-    width:min(520px,75vw);
-    margin:40px auto;
-    display:flex;
-    justify-content:center;
-}
-
-.mouse img{
-    width:100%;
-    height:auto;
-    display:block;
-    object-fit:contain;
-
-    /* Optional effects */
-    filter:drop-shadow(0 12px 24px rgba(0,0,0,.18));
-    transition:transform .3s ease;
-}
-
-.mouse:hover img{
-    transform:scale(1.02);
-}
-
-.scroll-cue{
-    font-family:var(--mono);
-    font-size:11px;
-    color:var(--ink-faint);
-    letter-spacing:0.1em;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:10px;
-    cursor:pointer;
-    background:none;
-    border:none;
-}
-      <!-- minimal line-art mouse, side view -->
-      <path class="mouse-body" d="M40,150 C30,110 55,70 110,60 C130,56 145,44 160,40 C168,38 176,42 176,50 C176,58 168,62 160,64
-        C185,66 230,72 265,90 C300,108 330,110 355,100
-        C365,96 372,100 370,108 C368,116 350,124 335,124
-        C345,132 350,142 345,150
-        C340,158 328,156 322,148
-        C300,158 260,164 215,164 C150,164 90,158 55,140 C46,150 40,150 40,150 Z" />
-      <!-- ear -->
-      <circle class="mouse-body" cx="150" cy="46" r="16" />
-      <!-- eye -->
-      <circle cx="168" cy="56" r="2.4" fill="var(--ink)" />
-      <!-- tail -->
-      <path class="mouse-body" d="M40,148 C10,150 -10,130 -6,108 C-2,90 14,84 20,96" />
-      <!-- spleen organ marker (revealed) -->
-      <ellipse class="mouse-organ" cx="230" cy="96" rx="20" ry="9" transform="rotate(-18 230 96)"/>
-    </svg>
+  <div class="mouse-wrap" id="mouseWrap">
+    <img src="image.png" alt="C57BL/6 mouse" class="hero-mouse">
   </div>
 
   <button class="scroll-cue" onclick="document.getElementById('tissues').scrollIntoView()">
@@ -542,8 +509,6 @@ sections.forEach(s=>{
   },{threshold:0.4}).observe(s);
 });
 dots.forEach(d=> d.addEventListener('click', ()=> document.getElementById(d.dataset.target).scrollIntoView({behavior:'smooth'})));
-
-// default: open white pulp on first load of spleen section (optional convenience)
 </script>
 </body>
 </html>
