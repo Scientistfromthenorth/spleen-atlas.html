@@ -95,7 +95,6 @@ h1.title em{ font-style:normal; color:var(--violet); }
   width:100%;
   height:auto;
   display:block;
-  object-fit:contain;
   filter:drop-shadow(0 20px 35px rgba(0,0,0,.25));
   transition:transform .4s ease;
 }
@@ -217,19 +216,94 @@ footer{ text-align:center; padding:60px 24px 50px; font-family:var(--mono); font
   <div class="eyebrow">Wild type · C57BL/6 · spleen</div>
   <h1 class="title">A spatial map of the <em>immunopeptidome</em></h1>
   <p class="subtitle">Laser microdissected regions of the mouse spleen, profiled for MHC-bound peptides and proteins — region by region, not cell by cell.</p>
-  <!-- THIS IS YOUR PNG -->
+
   <div class="mouse-wrap" id="mouseWrap">
-      <img src="mouse.png"
-           alt="C57BL/6 Mouse"
-           class="hero-mouse">
+    <svg class="hero-mouse" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 400 235" font-family="'IBM Plex Mono', monospace">
+  <defs>
+    <style>
+      .bg { fill:#08080a; }
+      .caption { fill:#8B8A93; font-size:11px; letter-spacing:.08em; }
+      .caption .accent { fill:#E39BB8; }
+
+      .silhouette { fill:#c9c7cd; stroke:#3a393f; stroke-width:1.2; }
+
+      .organ { stroke:#08080a; stroke-width:0.8; cursor:pointer; opacity:0.92; transform-box: fill-box; transform-origin: center; transition: transform .15s ease, opacity .15s, filter .15s; }
+      .organ-group:hover .organ { opacity:1; filter:brightness(1.35) saturate(1.25); transform: scale(1.12); }
+
+      .tooltip { opacity:0; pointer-events:none; transition:opacity .15s ease; }
+      .organ-group:hover .tooltip { opacity:1; }
+      .tooltip rect { fill:#111114; stroke:#333238; stroke-width:0.6; rx:2.5; }
+      .tooltip text { fill:#ECEAE6; font-size:7.5px; font-weight:500; }
+      .tooltip .sub { fill:#8B8A93; font-size:5.5px; letter-spacing:.04em; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="400" height="235"/>
+
+  <text x="200" y="20" text-anchor="middle" class="caption" font-size="10" letter-spacing="0.16em">
+    <tspan class="accent">&#9670;</tspan>&#160; MOUSE ANATOMY — TRACED FROM SOURCE &#160;·&#160; HOVER TO IDENTIFY &#160;·&#160; CLICK TO EXPLORE
+  </text>
+
+  <g transform="translate(20,40)">
+
+    <!-- silhouette, traced from source artwork -->
+    <path class="silhouette" d="M 9.0,31.5 Q 10.0,33.0 8.5,36.0 Q 7.0,39.0 7.5,43.5 Q 8.0,48.0 10.5,50.5 Q 13.0,53.0 33.5,59.0 Q 54.0,65.0 56.5,66.5 Q 59.0,68.0 60.5,71.5 Q 62.0,75.0 64.5,77.0 Q 67.0,79.0 65.5,83.0 Q 64.0,87.0 60.5,91.0 Q 57.0,95.0 47.0,95.5 Q 37.0,96.0 37.0,97.5 Q 37.0,99.0 43.5,101.5 Q 50.0,104.0 57.0,102.0 Q 64.0,100.0 66.0,101.0 Q 68.0,102.0 69.0,101.5 Q 70.0,101.0 70.0,98.5 Q 70.0,96.0 71.5,97.5 Q 73.0,99.0 77.0,94.5 Q 81.0,90.0 85.5,92.0 Q 90.0,94.0 95.0,94.5 Q 100.0,95.0 100.5,94.0 Q 101.0,93.0 112.5,90.0 Q 124.0,87.0 133.0,89.5 Q 142.0,92.0 142.0,93.5 Q 142.0,95.0 143.5,96.0 Q 145.0,97.0 150.5,96.0 Q 156.0,95.0 156.0,96.0 Q 156.0,97.0 153.0,98.0 Q 150.0,99.0 151.5,102.0 Q 153.0,105.0 158.5,104.0 Q 164.0,103.0 164.5,105.0 Q 165.0,107.0 167.5,105.5 Q 170.0,104.0 178.5,103.0 Q 187.0,102.0 190.5,97.5 Q 194.0,93.0 193.5,91.0 Q 193.0,89.0 200.0,83.0 Q 207.0,77.0 215.5,79.0 Q 224.0,81.0 240.5,81.0 Q 257.0,81.0 269.0,79.5 Q 281.0,78.0 299.0,78.5 Q 317.0,79.0 325.0,81.0 Q 333.0,83.0 339.0,86.0 Q 345.0,89.0 347.5,92.5 Q 350.0,96.0 350.0,99.5 Q 350.0,103.0 348.5,106.0 Q 347.0,109.0 348.0,110.0 Q 349.0,111.0 352.0,106.5 Q 355.0,102.0 354.5,96.5 Q 354.0,91.0 350.0,86.5 Q 346.0,82.0 332.5,76.5 Q 319.0,71.0 313.5,70.0 Q 308.0,69.0 266.5,70.0 Q 225.0,71.0 218.0,69.5 Q 211.0,68.0 209.5,64.0 Q 208.0,60.0 197.0,49.5 Q 186.0,39.0 178.0,33.5 Q 170.0,28.0 158.5,23.5 Q 147.0,19.0 138.5,18.5 Q 130.0,18.0 114.0,20.5 Q 98.0,23.0 96.0,22.0 Q 94.0,21.0 88.5,22.0 Q 83.0,23.0 81.0,20.5 Q 79.0,18.0 73.5,16.0 Q 68.0,14.0 69.5,11.0 Q 71.0,8.0 67.0,7.0 Q 63.0,6.0 60.5,7.0 Q 58.0,8.0 55.0,11.5 Q 52.0,15.0 40.5,19.5 Q 29.0,24.0 21.5,28.5 Q 14.0,33.0 13.5,31.0 Q 13.0,29.0 12.5,32.0 Q 12.0,35.0 11.5,33.0 Q 11.0,31.0 10.5,32.0 Q 10.0,33.0 9.0,31.5 Q 8.0,30.0 9.0,31.5 Z"/>
+
+    <!-- INTESTINES -->
+    <a href="organ-data.html#intestines" target="_blank">
+      <g class="organ-group" data-organ="intestines">
+        <path class="organ" fill="#e7c0be" d="M 145.5,38.5 Q 142.0,39.0 139.0,35.5 Q 136.0,32.0 132.5,30.5 Q 129.0,29.0 126.5,29.0 Q 124.0,29.0 121.0,32.0 Q 118.0,35.0 114.0,35.5 Q 110.0,36.0 104.0,39.5 Q 98.0,43.0 93.5,44.5 Q 89.0,46.0 88.5,46.5 Q 88.0,47.0 88.0,49.0 Q 88.0,51.0 87.0,51.5 Q 86.0,52.0 88.0,52.0 Q 90.0,52.0 92.5,54.5 Q 95.0,57.0 94.5,59.0 Q 94.0,61.0 95.5,60.5 Q 97.0,60.0 99.0,61.5 Q 101.0,63.0 101.5,62.5 Q 102.0,62.0 105.5,62.0 Q 109.0,62.0 111.0,61.0 Q 113.0,60.0 116.0,57.0 Q 119.0,54.0 120.5,51.0 Q 122.0,48.0 122.0,46.5 Q 122.0,45.0 124.5,41.0 Q 127.0,37.0 129.5,37.0 Q 132.0,37.0 134.0,38.0 Q 136.0,39.0 137.5,40.5 Q 139.0,42.0 140.0,45.5 Q 141.0,49.0 144.0,49.5 Q 147.0,50.0 147.0,49.0 Q 147.0,48.0 148.0,47.5 Q 149.0,47.0 149.0,42.5 Q 149.0,38.0 145.5,38.5 Z"/>
+        <g class="tooltip" transform="translate(116,12)">
+          <rect x="-27" y="-11" width="54" height="18" rx="2.5"/>
+          <text x="0" y="-1" text-anchor="middle">Intestines</text>
+          <text x="0" y="6" text-anchor="middle" class="sub">DIGESTIVE</text>
+        </g>
+      </g>
+    </a>
+
+    <!-- LIVER -->
+    <a href="organ-data.html#liver" target="_blank">
+      <g class="organ-group" data-organ="liver">
+        <path class="organ" fill="#ab7b7a" d="M 129.5,40.0 Q 128.0,39.0 125.5,43.5 Q 123.0,48.0 122.5,50.5 Q 122.0,53.0 118.5,57.0 Q 115.0,61.0 112.5,62.5 Q 110.0,64.0 106.0,64.0 Q 102.0,64.0 100.5,65.5 Q 99.0,67.0 98.0,67.0 Q 97.0,67.0 96.0,66.0 Q 95.0,65.0 93.0,61.0 Q 91.0,57.0 91.0,56.0 Q 91.0,55.0 89.5,54.5 Q 88.0,54.0 86.0,56.5 Q 84.0,59.0 84.0,61.5 Q 84.0,64.0 86.5,66.5 Q 89.0,69.0 90.5,69.5 Q 92.0,70.0 94.5,69.5 Q 97.0,69.0 98.0,71.5 Q 99.0,74.0 101.0,75.5 Q 103.0,77.0 106.0,78.0 Q 109.0,79.0 111.5,79.0 Q 114.0,79.0 114.5,79.5 Q 115.0,80.0 118.0,79.5 Q 121.0,79.0 124.0,76.5 Q 127.0,74.0 129.5,68.0 Q 132.0,62.0 132.0,60.5 Q 132.0,59.0 132.5,58.5 Q 133.0,58.0 133.0,52.0 Q 133.0,46.0 132.0,43.5 Q 131.0,41.0 129.5,40.0 Z"/>
+        <g class="tooltip" transform="translate(100,96)">
+          <rect x="-24" y="-11" width="48" height="18" rx="2.5"/>
+          <text x="0" y="-1" text-anchor="middle">Liver</text>
+          <text x="0" y="6" text-anchor="middle" class="sub">METABOLIC</text>
+        </g>
+      </g>
+    </a>
+
+    <!-- PANCREAS / GALLBLADDER -->
+    <a href="organ-data.html#pancreas" target="_blank">
+      <g class="organ-group" data-organ="pancreas">
+        <path class="organ" fill="#efab41" d="M 131.0,40.0 Q 132.0,41.0 132.0,41.5 Q 132.0,42.0 132.5,42.5 Q 133.0,43.0 133.0,44.0 Q 133.0,45.0 133.5,45.5 Q 134.0,46.0 134.0,50.0 Q 134.0,54.0 134.5,54.0 Q 135.0,54.0 136.5,52.5 Q 138.0,51.0 138.0,47.0 Q 138.0,43.0 137.5,42.5 Q 137.0,42.0 137.0,41.5 Q 137.0,41.0 136.5,40.5 Q 136.0,40.0 135.0,40.0 Q 134.0,40.0 133.5,39.5 Q 133.0,39.0 131.5,39.0 Q 130.0,39.0 131.0,40.0 Z"/>
+        <g class="tooltip" transform="translate(162,42)">
+          <rect x="-30" y="-11" width="60" height="18" rx="2.5"/>
+          <text x="0" y="-1" text-anchor="middle">Pancreas</text>
+          <text x="0" y="6" text-anchor="middle" class="sub">ENDOCRINE</text>
+        </g>
+      </g>
+    </a>
+
+    <!-- BRAIN (traced separately, scaled into skull) -->
+    <a href="organ-data.html#brain" target="_blank">
+      <g class="organ-group" data-organ="brain">
+        <path class="organ" fill="#cba5a0" transform="translate(14,5) scale(0.53)" d="M 11.5,33.5 Q 12.0,34.0 11.5,35.0 Q 11.0,36.0 12.0,37.0 Q 13.0,38.0 13.0,38.5 Q 13.0,39.0 32.0,39.0 Q 51.0,39.0 52.0,37.5 Q 53.0,36.0 53.0,34.5 Q 53.0,33.0 51.5,30.0 Q 50.0,27.0 50.0,26.0 Q 50.0,25.0 48.5,23.5 Q 47.0,22.0 44.0,20.5 Q 41.0,19.0 37.5,19.0 Q 34.0,19.0 33.5,19.5 Q 33.0,20.0 32.0,20.0 Q 31.0,20.0 30.5,19.5 Q 30.0,19.0 26.5,19.0 Q 23.0,19.0 21.5,20.0 Q 20.0,21.0 19.0,21.0 Q 18.0,21.0 16.0,23.0 Q 14.0,25.0 14.0,26.0 Q 14.0,27.0 13.0,28.0 Q 12.0,29.0 12.0,30.5 Q 12.0,32.0 11.5,32.5 Q 11.0,33.0 11.5,33.5 Z"/>
+        <g class="tooltip" transform="translate(29,-10)">
+          <rect x="-22" y="-11" width="44" height="18" rx="2.5"/>
+          <text x="0" y="-1" text-anchor="middle">Brain</text>
+          <text x="0" y="6" text-anchor="middle" class="sub">CNS</text>
+        </g>
+      </g>
+    </a>
+
+  </g>
+
+  <text x="200" y="226" text-anchor="middle" class="caption" font-size="8">
+    SILHOUETTE + LIVER + PANCREAS + INTESTINES + BRAIN TRACED FROM UPLOADED ARTWORK · OTHER ORGANS NOT DISTINCTLY ILLUSTRATED IN SOURCE
+  </text>
+</svg>
   </div>
-
-  <button class="scroll-cue" onclick="document.getElementById('tissues').scrollIntoView()">
-      <span>BEGIN</span>
-      <span class="line"></span>
-  </button>
-
-</section>
 
   <button class="scroll-cue" onclick="document.getElementById('tissues').scrollIntoView()">
     <span>BEGIN</span>
