@@ -77,16 +77,21 @@
       </g>
     </a>
     <!-- Spleen -->
-    <a href="organ-data.html#spleen" target="_blank">
-      <g class="organ-group" data-organ="pancreas">
-        <path class="organ" fill="#8B5A4A" d="M 172,192 Q184,190 186,204 Q188,218 176,222 Q164,224 162,210 Q160,196 172,192 Z"/>
-        <g class="tooltip" transform="translate(162,42)">
-          <rect x="-30" y="-11" width="60" height="18" rx="2.5"/>
-          <text x="0" y="-1" text-anchor="middle">Spleen</text>
-          <text x="0" y="6" text-anchor="middle" class="sub">SPLEEN</text>
-        </g>
-      </g>
-    </a>
+<a href="organ-data.html#spleen" target="_blank">
+  <g class="organ-group" data-organ="spleen">
+    <path class="organ" fill="#8B5A4A"
+          d="M 137,42
+             Q149,40 151,54
+             Q153,68 141,72
+             Q129,74 127,60
+             Q125,46 137,42 Z"/>
+    <g class="tooltip" transform="translate(170,40)">
+      <rect x="-30" y="-11" width="60" height="18" rx="2.5"/>
+      <text x="0" y="-1" text-anchor="middle">Spleen</text>
+      <text x="0" y="6" text-anchor="middle" class="sub">SPLEEN</text>
+    </g>
+  </g>
+</a>
 
     <!-- BRAIN (traced separately, scaled into skull) -->
     <a href="organ-data.html#brain" target="_blank">
