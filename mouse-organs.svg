@@ -40,6 +40,18 @@
         </g>
       </g>
     </a>
+    
+    <!-- ============ SPLEEN (anatomically placed — not distinctly illustrated in source) ============ -->
+    <a href="organ-data.html#spleen" target="_blank">
+      <g class="organ-group" data-organ="spleen">
+        <path class="organ" fill="#8C7BC9" d="M162,30 Q170,29 174,35 Q178,41 175,48 Q172,55 166,54 Q160,53 158,46 Q156,38 162,30 Z"/>
+        <g class="tooltip" transform="translate(196,36)">
+          <rect x="-26" y="-11" width="52" height="18" rx="2.5"/>
+          <text x="0" y="-1" text-anchor="middle">Spleen</text>
+          <text x="0" y="6" text-anchor="middle" class="sub">LYMPHOID</text>
+        </g>
+      </g>
+    </a>
 
     <!-- LIVER -->
     <a href="organ-data.html#liver" target="_blank">
