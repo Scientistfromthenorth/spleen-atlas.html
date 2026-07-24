@@ -44,7 +44,7 @@
     <!-- ============ SPLEEN (anatomically placed — not distinctly illustrated in source) ============ -->
     <a href="organ-data.html#spleen" target="_blank">
       <g class="organ-group" data-organ="spleen">
-        <path class="organ" fill="#8B5A4A" d="M130,30 Q170,29 174,35 Q178,41 175,48 Q172,55 166,54 Q155,53 150,46 Q145,38 130,30 Z"/>
+        <path class="organ" fill="#8B5A4A" d="M130,30 Q170,29 174,35 Q178,41 170,48 Q165,55 160,54 Q155,53 150,40 Q140,38 130,30 Z"/>
         <g class="tooltip" transform="translate(196,36)">
           <rect x="-27" y="-11" width="55" height="18" rx="2.5"/>
           <text x="0" y="-1" text-anchor="middle">Spleen</text>
